@@ -1,101 +1,104 @@
-import Image from "next/image";
+"use client"
+import { useState } from "react";
+import data from "./data";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { Building2, Globe, Mail, Phone, Link, Flag, Building } from "lucide-react"
 
 export default function Home() {
+  const [tableData, setTableData] = useState(data)
+  
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="p-6">
+      <div className="mb-8 flex items-center justify-center gap-2">
+        <Building className="h-7 w-7 text-gray-400" />
+        <h1 className="text-3xl font-bold tracking-tight text-gray-200">Company Directory</h1>
+      </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      <div className="rounded-lg border border-gray-800 overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="hover:bg-gray-800/50 border-gray-800">
+              <TableHead className="w-[140px] text-gray-300">
+                <div className="flex items-center gap-2">
+                  <Globe className="h-4 w-4 text-gray-400" />
+                  <span className="font-medium">Domain</span>
+                </div>
+              </TableHead>
+              <TableHead className="text-gray-300">
+                <div className="flex items-center gap-2">
+                  <Building2 className="h-4 w-4 text-gray-400" />
+                  <span className="font-medium">Name</span>
+                </div>
+              </TableHead>
+              <TableHead className="text-gray-300 text-center w-[100px]">
+                <span className="font-medium">Score</span>
+              </TableHead>
+              <TableHead className="text-gray-300">
+                <div className="flex items-center gap-2">
+                  <Mail className="h-4 w-4 text-gray-400" />
+                  <span className="font-medium">Email</span>
+                </div>
+              </TableHead>
+              <TableHead className="text-gray-300">
+                <div className="flex items-center gap-2">
+                  <Phone className="h-4 w-4 text-gray-400" />
+                  <span className="font-medium">Phone</span>
+                </div>
+              </TableHead>
+              <TableHead className="text-gray-300">
+                <div className="flex items-center gap-2">
+                  <Link className="h-4 w-4 text-gray-400" />
+                  <span className="font-medium">URL</span>
+                </div>
+              </TableHead>
+              <TableHead className="text-gray-300">
+                <div className="flex items-center gap-2">
+                  <Flag className="h-4 w-4 text-gray-400" />
+                  <span className="font-medium">Country</span>
+                </div>
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {tableData.map((element) => (
+              <TableRow key={element.domain} className="hover:bg-gray-800/50 border-gray-800">
+                <TableCell className="font-medium text-gray-300">{element.domain}</TableCell>
+                <TableCell className="text-gray-400">{element.name}</TableCell>
+                <TableCell className="text-center">
+                  <span className={`inline-flex items-center justify-center w-12 h-8 rounded-full font-medium ${
+                    element.score >= 80 ? 'bg-green-900/50 text-green-400' :
+                    element.score >= 50 ? 'bg-yellow-900/50 text-yellow-400' :
+                    'bg-red-900/50 text-red-400'
+                  }`}>
+                    {element.score}
+                  </span>
+                </TableCell>
+                <TableCell>
+                  <a href={`mailto:${element.public_email}`} className="text-blue-400 hover:text-blue-300 hover:underline">
+                    {element.public_email}
+                  </a>
+                </TableCell>
+                <TableCell className="text-gray-400">{element.phones}</TableCell>
+                <TableCell>
+                  <a href={element.url} target="_blank" rel="noopener noreferrer" 
+                     className="text-blue-400 hover:text-blue-300 hover:underline max-w-[200px] truncate block">
+                    {element.url}
+                  </a>
+                </TableCell>
+                <TableCell className="text-gray-400">{element.country}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 }
