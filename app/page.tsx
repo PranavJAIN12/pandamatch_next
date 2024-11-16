@@ -4,16 +4,49 @@ import data from "./data";
 import {
   Table,
   TableBody,
-  TableCaption,
+  
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Building2, Globe, Mail, Phone, Link, Flag, Building } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Building2, Globe, Mail, Phone, Link, Flag, Building, FunctionSquare, Plus, Minus } from "lucide-react"
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [tableData, setTableData] = useState(data)
+  const [page, setPage] = useState(1)
+  const [search, setSearch]=useState("")
+
+  const dataPerPage:number = 10;
+  const startIndex = (page - 1) * dataPerPage;
+  const endIndex = startIndex + dataPerPage;
+  const currentData = tableData.slice(startIndex, endIndex);
+
+
+  const handleNextPage=()=>{
+    if(endIndex<tableData.length){
+      setPage(page+1)
+    }
+  }
+  const handlePrevPage=()=>{
+    if (page > 1) {
+      setPage(page - 1);
+    }
+  }
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const searchTerm = e.target.value;
+    setSearch(searchTerm);
+
+    const filteredData = data.filter((item) =>
+      item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    setTableData(filteredData);
+  };
   
   return (
     <div className="p-6">
@@ -21,6 +54,11 @@ export default function Home() {
         <Building className="h-7 w-7 text-gray-400" />
         <h1 className="text-3xl font-bold tracking-tight text-gray-200">Company Directory</h1>
       </div>
+
+      <div className="grid w-full max-w-sm items-center gap-1.5 my-4 text-center border-2 border-white ">
+      
+      <Input type="text" id="text" placeholder="Search By Name" value={search} onChange={handleSearchChange}/>
+    </div>
 
       <div className="rounded-lg border border-gray-800 overflow-hidden">
         <Table>
@@ -65,10 +103,16 @@ export default function Home() {
                   <span className="font-medium">Country</span>
                 </div>
               </TableHead>
+              <TableHead className="text-gray-300 text-center"  colSpan={2}>
+                <div className="flex items-center gap-2">
+                  <FunctionSquare className="h-4 w-4 text-gray-400" />
+                  <span className="font-medium">Function</span>
+                </div>
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {tableData.map((element) => (
+            {currentData.map((element) => (
               <TableRow key={element.domain} className="hover:bg-gray-800/50 border-gray-800">
                 <TableCell className="font-medium text-gray-300">{element.domain}</TableCell>
                 <TableCell className="text-gray-400">{element.name}</TableCell>
@@ -94,10 +138,23 @@ export default function Home() {
                   </a>
                 </TableCell>
                 <TableCell className="text-gray-400">{element.country}</TableCell>
+                <TableCell><Button><Plus/>Add</Button></TableCell>
+                <TableCell><Button><Minus/>Delete</Button></TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
+      </div>
+      <div className="pagination flex justify-between mt-4">
+        <Button onClick={handlePrevPage} disabled={page === 1}>
+          Previous
+        </Button>
+        <Button
+          onClick={handleNextPage}
+          // disabled={endIndex >= tableData.length}
+        >
+          Next
+        </Button>
       </div>
     </div>
   );
