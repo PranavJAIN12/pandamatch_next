@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
+/* eslint-disable @typescript-eslint/no-floating-promises */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 import { useState, useEffect } from "react";
 import data from "./data";
@@ -26,43 +29,23 @@ export default function Home() {
   const endIndex = startIndex + dataPerPage;
   const currentData = tableData.slice(startIndex, endIndex);
 
+  
+  const fetchData = async () => {
+    try {
+      const { data, error } = await supabase.from("DataEntry").select("*");
+      if (error) {
+        console.error("Error fetching data:", error);
+      } else {
+        setTableData(data || []);
+      }
+    } catch (error) {
+      console.error("Unexpected error:", error);
+    }
+  };
 
   useEffect(() => {
-    const insertData = async () => {
-      try {
-        
-        const { data: supabaseData, error: selectError } = await supabase
-          .from("DataEntry")
-          .select("*");
-  
-        if (selectError) {
-          console.log("Error fetching data from Supabase", selectError);
-          return;
-        }
-  
-        
-        if (supabaseData.length === 0) {
-          console.log("Table is empty, inserting data...");
-          const { error: insertError } = await supabase
-            .from("DataEntry")
-            .insert(data); // Bulk insert
-  
-          if (insertError) {
-            console.log("Error inserting data", insertError);
-          } else {
-            console.log("Data inserted successfully");
-          }
-        } else {
-          console.log("Data already exists, skipping insertion.");
-        }
-      } catch (error) {
-        console.log("Error inserting data", error);
-      }
-    };
-  
-    insertData();
+    fetchData();
   }, []);
-  
 
   const handleNextPage = () => {
     if (endIndex < tableData.length) {
@@ -86,37 +69,36 @@ export default function Home() {
     setTableData(filteredData);
   };
 
-  const addIndb = async (rowData: any) => {
-    console.log("Button clicked, adding data:", rowData);
+  const addIndb = async (entry: any) => {
     try {
-      const { data, error } = await supabase
-        .from("DataEntry")
-        .insert([rowData]) 
-        .select();
-
+      const { data, error } = await supabase.from("DataEntry").upsert([entry]).select();
       if (error) {
-        console.error("Error inserting data:", error);
+        console.error("Error adding data:", error);
+        alert(error)
       } else {
-        alert("Data added successfully:", data);
+        console.log("Data added:", data);
+        alert("Data added Successfully")
+        fetchData(); // Refresh the data
       }
     } catch (error) {
       console.error("Unexpected error:", error);
     }
   };
-
-  const deleteFromDb = async (domain: any) => {
-    console.log("btnclicked")
+  const deleteFromDb = async (domain: string) => {
     try {
-      const { data, error } = await supabase
-        .from("DataEntry")
-        .delete()
-        .match({ domain: domain })
-      console.log("delete btn ")
-      alert("data deleted", data)
+      const { data, error } = await supabase.from("DataEntry").delete().match({ domain });
+      if (error) {
+        console.error("Error deleting data:", error);
+        alert(error)
+      } else {
+        console.log("Data deleted:", data);
+        fetchData(); // Refresh the data
+        alert("deleted")
+      }
     } catch (error) {
-      console.log("error deleting data", error)
+      console.error("Unexpected error:", error);
     }
-  }
+  };
 
   return (
     <div className="p-6 text-center">
@@ -223,7 +205,7 @@ export default function Home() {
         </Button>
         <Button
           onClick={handleNextPage}
-        // disabled={endIndex >= tableData.length}
+        disabled={endIndex >= tableData.length}
         >
           Next
         </Button>
