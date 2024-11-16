@@ -143,10 +143,54 @@ export default function Home() {
 
       <div className="rounded-lg border border-gray-800 overflow-hidden">
         <Table>
-          {/* Rest of your table code remains the same */}
+         
           <TableHeader>
             <TableRow className="hover:bg-gray-800/50 border-gray-800 text-center">
-              {/* Your existing TableHead components */}
+            <TableHead className="w-[140px] text-gray-300 text-center">
+                <div className="flex items-center gap-2">
+                  <Globe className="h-4 w-4 text-gray-400" />
+                  <span className="font-medium">Domain</span>
+                </div>
+              </TableHead>
+              <TableHead className="text-gray-300">
+                <div className="flex items-center gap-2">
+                  <Building2 className="h-4 w-4 text-gray-400" />
+                  <span className="font-medium">Name</span>
+                </div>
+              </TableHead>
+              <TableHead className="text-gray-300 text-center w-[100px]">
+                <span className="font-medium">Score</span>
+              </TableHead>
+              <TableHead className="text-gray-300">
+                <div className="flex items-center gap-2">
+                  <Mail className="h-4 w-4 text-gray-400" />
+                  <span className="font-medium">Email</span>
+                </div>
+              </TableHead>
+              <TableHead className="text-gray-300">
+                <div className="flex items-center gap-2">
+                  <Phone className="h-4 w-4 text-gray-400" />
+                  <span className="font-medium">Phone</span>
+                </div>
+              </TableHead>
+              <TableHead className="text-gray-300">
+                <div className="flex items-center gap-2">
+                  <Link className="h-4 w-4 text-gray-400" />
+                  <span className="font-medium">URL</span>
+                </div>
+              </TableHead>
+              <TableHead className="text-gray-300">
+                <div className="flex items-center gap-2">
+                  <Flag className="h-4 w-4 text-gray-400" />
+                  <span className="font-medium">Country</span>
+                </div>
+              </TableHead>
+              <TableHead className="text-gray-300 text-center" colSpan={2}>
+                <div className="flex items-center gap-2">
+                  <FunctionSquare className="h-4 w-4 text-gray-400" />
+                  <span className="font-medium">Function</span>
+                </div>
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -181,12 +225,12 @@ export default function Home() {
                 </TableCell>
                 <TableCell className="text-gray-400">{element.country}</TableCell>
                 <TableCell>
-                  <Button onClick={() => void addIndb(element)}>
+                  <Button  onClick={() => void addIndb(element)}>
                     <Plus />Add
                   </Button>
                 </TableCell>
                 <TableCell>
-                  <Button onClick={() => void deleteFromDb(element.domain)}>
+                  <Button variant={"destructive"} onClick={() => void deleteFromDb(element.domain)}>
                     <Minus />Delete
                   </Button>
                 </TableCell>
