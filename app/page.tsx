@@ -61,15 +61,25 @@ export default function Home() {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchTerm = e.target.value;
     setSearch(searchTerm);
-
-    const filteredData = data.filter((item) =>
+  
+    const filteredData = tableData.filter((item) =>
       item.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-
+  
     setTableData(filteredData);
   };
+  
+  interface DataEntry {
+    domain: string;
+    name: string;
+    score: number;
+    public_email: string;
+    phones: string[];
+    url: string;
+    country: string;
+  }
 
-  const addIndb = async (entry: any) => {
+  const addIndb = async (entry: DataEntry) => {
     try {
       const { data, error } = await supabase.from("DataEntry").upsert([entry]).select();
       if (error) {
@@ -80,8 +90,8 @@ export default function Home() {
         alert("Data added Successfully")
         fetchData(); // Refresh the data
       }
-    } catch (error) {
-      console.error("Unexpected error:", error);
+    } catch (err) {
+      console.error("Unexpected error:", err);
     }
   };
   const deleteFromDb = async (domain: string) => {
@@ -95,8 +105,8 @@ export default function Home() {
         fetchData(); // Refresh the data
         alert("deleted")
       }
-    } catch (error) {
-      console.error("Unexpected error:", error);
+    } catch (err) {
+      console.error("Unexpected error:", err);
     }
   };
 
