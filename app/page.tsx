@@ -1,37 +1,75 @@
 "use client"
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import data from "./data";
 import {
   Table,
   TableBody,
-  
+
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
-import { Building2, Globe, Mail, Phone, Link, Flag, Building, FunctionSquare, Plus, Minus } from "lucide-react"
+import { Building2, Globe, Mail, Phone, Link, Flag, Building, FunctionSquare, Plus, Minus, Search } from "lucide-react"
 import { Button } from "@/components/ui/button";
+import { supabase } from "./client";
 
 export default function Home() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [tableData, setTableData] = useState(data)
   const [page, setPage] = useState(1)
-  const [search, setSearch]=useState("")
+  const [search, setSearch] = useState("")
 
-  const dataPerPage:number = 10;
+  const dataPerPage: number = 10;
   const startIndex = (page - 1) * dataPerPage;
   const endIndex = startIndex + dataPerPage;
   const currentData = tableData.slice(startIndex, endIndex);
 
 
-  const handleNextPage=()=>{
-    if(endIndex<tableData.length){
-      setPage(page+1)
+  useEffect(() => {
+    const insertData = async () => {
+      try {
+        
+        const { data: supabaseData, error: selectError } = await supabase
+          .from("DataEntry")
+          .select("*");
+  
+        if (selectError) {
+          console.log("Error fetching data from Supabase", selectError);
+          return;
+        }
+  
+        
+        if (supabaseData.length === 0) {
+          console.log("Table is empty, inserting data...");
+          const { error: insertError } = await supabase
+            .from("DataEntry")
+            .insert(data); // Bulk insert
+  
+          if (insertError) {
+            console.log("Error inserting data", insertError);
+          } else {
+            console.log("Data inserted successfully");
+          }
+        } else {
+          console.log("Data already exists, skipping insertion.");
+        }
+      } catch (error) {
+        console.log("Error inserting data", error);
+      }
+    };
+  
+    insertData();
+  }, []);
+  
+
+  const handleNextPage = () => {
+    if (endIndex < tableData.length) {
+      setPage(page + 1)
     }
   }
-  const handlePrevPage=()=>{
+  const handlePrevPage = () => {
     if (page > 1) {
       setPage(page - 1);
     }
@@ -47,24 +85,59 @@ export default function Home() {
 
     setTableData(filteredData);
   };
-  
+
+  const addIndb = async (rowData: any) => {
+    console.log("Button clicked, adding data:", rowData);
+    try {
+      const { data, error } = await supabase
+        .from("DataEntry")
+        .insert([rowData]) 
+        .select();
+
+      if (error) {
+        console.error("Error inserting data:", error);
+      } else {
+        alert("Data added successfully:", data);
+      }
+    } catch (error) {
+      console.error("Unexpected error:", error);
+    }
+  };
+
+  const deleteFromDb = async (domain: any) => {
+    console.log("btnclicked")
+    try {
+      const { data, error } = await supabase
+        .from("DataEntry")
+        .delete()
+        .match({ domain: domain })
+      console.log("delete btn ")
+      alert("data deleted", data)
+    } catch (error) {
+      console.log("error deleting data", error)
+    }
+  }
+
   return (
-    <div className="p-6">
+    <div className="p-6 text-center">
       <div className="mb-8 flex items-center justify-center gap-2">
         <Building className="h-7 w-7 text-gray-400" />
         <h1 className="text-3xl font-bold tracking-tight text-gray-200">Company Directory</h1>
       </div>
 
       <div className="grid w-full max-w-sm items-center gap-1.5 my-4 text-center border-2 border-white ">
-      
-      <Input type="text" id="text" placeholder="Search By Name" value={search} onChange={handleSearchChange}/>
-    </div>
+        <div className="flex align-middle gap-6 justify-between">
+
+          <Input type="text" id="text" placeholder="Search By Name" value={search} onChange={handleSearchChange} />
+          <Search />
+        </div>
+      </div>
 
       <div className="rounded-lg border border-gray-800 overflow-hidden">
         <Table>
           <TableHeader>
-            <TableRow className="hover:bg-gray-800/50 border-gray-800">
-              <TableHead className="w-[140px] text-gray-300">
+            <TableRow className="hover:bg-gray-800/50 border-gray-800 text-center">
+              <TableHead className="w-[140px] text-gray-300 text-center">
                 <div className="flex items-center gap-2">
                   <Globe className="h-4 w-4 text-gray-400" />
                   <span className="font-medium">Domain</span>
@@ -103,7 +176,7 @@ export default function Home() {
                   <span className="font-medium">Country</span>
                 </div>
               </TableHead>
-              <TableHead className="text-gray-300 text-center"  colSpan={2}>
+              <TableHead className="text-gray-300 text-center" colSpan={2}>
                 <div className="flex items-center gap-2">
                   <FunctionSquare className="h-4 w-4 text-gray-400" />
                   <span className="font-medium">Function</span>
@@ -117,11 +190,10 @@ export default function Home() {
                 <TableCell className="font-medium text-gray-300">{element.domain}</TableCell>
                 <TableCell className="text-gray-400">{element.name}</TableCell>
                 <TableCell className="text-center">
-                  <span className={`inline-flex items-center justify-center w-12 h-8 rounded-full font-medium ${
-                    element.score >= 80 ? 'bg-green-900/50 text-green-400' :
-                    element.score >= 50 ? 'bg-yellow-900/50 text-yellow-400' :
-                    'bg-red-900/50 text-red-400'
-                  }`}>
+                  <span className={`inline-flex items-center justify-center w-12 h-8 rounded-full font-medium ${element.score >= 80 ? 'bg-green-900/50 text-green-400' :
+                      element.score >= 50 ? 'bg-yellow-900/50 text-yellow-400' :
+                        'bg-red-900/50 text-red-400'
+                    }`}>
                     {element.score}
                   </span>
                 </TableCell>
@@ -132,14 +204,14 @@ export default function Home() {
                 </TableCell>
                 <TableCell className="text-gray-400">{element.phones}</TableCell>
                 <TableCell>
-                  <a href={element.url} target="_blank" rel="noopener noreferrer" 
-                     className="text-blue-400 hover:text-blue-300 hover:underline max-w-[200px] truncate block">
+                  <a href={element.url} target="_blank" rel="noopener noreferrer"
+                    className="text-blue-400 hover:text-blue-300 hover:underline max-w-[200px] truncate block">
                     {element.url}
                   </a>
                 </TableCell>
                 <TableCell className="text-gray-400">{element.country}</TableCell>
-                <TableCell><Button><Plus/>Add</Button></TableCell>
-                <TableCell><Button><Minus/>Delete</Button></TableCell>
+                <TableCell><Button onClick={() => addIndb(element)}><Plus />Add</Button></TableCell>
+                <TableCell><Button onClick={() => deleteFromDb(element.domain)}><Minus />Delete</Button></TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -151,7 +223,7 @@ export default function Home() {
         </Button>
         <Button
           onClick={handleNextPage}
-          // disabled={endIndex >= tableData.length}
+        // disabled={endIndex >= tableData.length}
         >
           Next
         </Button>
